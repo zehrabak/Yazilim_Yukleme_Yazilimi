@@ -14,14 +14,31 @@ ApplicationWindow {
         rowSpacing: 10
         columnSpacing: 10
 
-        Button {
-            text: "Bağlama"
-            Layout.alignment: Qt.AlignLeft
-            Layout.leftMargin: 20
-            Layout.topMargin: 10
+        // Bağlan butonu ve sonuç label'ı ilk satırda olacak
+        RowLayout {
             Layout.columnSpan: 4
+
+            Button {
+                id: connectButton
+                text: "Bağlan"
+                Layout.alignment: Qt.AlignLeft
+                Layout.leftMargin: 20
+                Layout.topMargin: 10
+                onClicked: {
+                    pingHelper.ping()
+                }
+            }
+
+            Label {
+                id: pingResultLabel
+                text: ""  // Başlangıçta boş metin
+                Layout.alignment: Qt.AlignLeft
+                Layout.leftMargin: 20
+                Layout.topMargin: 10
+            }
         }
 
+        // Diğer içerikler buraya gelecek...
         Text {
             text: "u-boot"
             Layout.leftMargin: 20
@@ -88,5 +105,16 @@ ApplicationWindow {
             Layout.alignment: Qt.AlignHCenter
             Layout.columnSpan: 4
         }
+
+        Connections {
+            target: pingHelper
+            onPingSuccess: {
+                pingResultLabel.text = "Ping başarılı"
+            }
+            onPingFailed: {
+                pingResultLabel.text = "Ping başarısız"
+            }
+        }
     }
 }
+

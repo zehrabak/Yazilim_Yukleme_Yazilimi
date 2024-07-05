@@ -17,6 +17,7 @@ qt_add_qml_module(appYazilimYuklemeProjesi
     VERSION 1.0
     QML_FILES
         Main.qml
+        SOURCES pinghelper.h pinghelper.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
