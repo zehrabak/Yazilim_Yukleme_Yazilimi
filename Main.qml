@@ -38,6 +38,29 @@ ApplicationWindow {
             }
         }
 
+        // SSH bağlantısı için alan
+        RowLayout {
+            Layout.columnSpan: 4
+            Layout.topMargin: 20
+
+            Button {
+                id: sshConnectButton
+                text: "SSH Bağlan"
+                Layout.alignment: Qt.AlignLeft
+                Layout.leftMargin: 20
+                onClicked: {
+                    sshHelper.connectToHost("hostname", "username", "password")
+                }
+            }
+
+            Label {
+                id: sshResultLabel
+                text: ""  // Başlangıçta boş metin
+                Layout.alignment: Qt.AlignLeft
+                Layout.leftMargin: 20
+            }
+        }
+
         // Diğer içerikler buraya gelecek...
         Text {
             text: "u-boot"
@@ -108,13 +131,53 @@ ApplicationWindow {
 
         Connections {
             target: pingHelper
+            onPingInProgress: {
+                pingResultLabel.text = "Ping testi devam ediyor"
+                pingAnimation.running = true
+            }
             onPingSuccess: {
                 pingResultLabel.text = "Ping başarılı"
+                pingResultLabel.color = "green"  // Başarılı durum için yeşil renk
+                pingAnimation.running = false
             }
             onPingFailed: {
                 pingResultLabel.text = "Ping başarısız"
+                pingResultLabel.color = "red"  // Başarısız durum için kırmızı renk
+                pingAnimation.running = false
+            }
+        }
+
+        Connections {
+            target: sshHelper
+            onSshConnected: {
+                sshResultLabel.text = "SSH bağlantısı başarılı"
+                sshResultLabel.color = "green"
+            }
+            onSshConnectionFailed: {
+                sshResultLabel.text = "SSH bağlantısı başarısız"
+                sshResultLabel.color = "red"
+            }
+            onSshMessage: {
+                sshResultLabel.text = message
+            }
+        }
+    }
+
+    Timer {
+        id: pingAnimation
+        interval: 500
+        repeat: true
+        running: false
+        onTriggered: {
+            if (pingResultLabel.text === "Ping testi devam ediyor") {
+                pingResultLabel.text = "Ping testi devam ediyor ."
+            } else if (pingResultLabel.text === "Ping testi devam ediyor .") {
+                pingResultLabel.text = "Ping testi devam ediyor . ."
+            } else if (pingResultLabel.text === "Ping testi devam ediyor . .") {
+                pingResultLabel.text = "Ping testi devam ediyor . . ."
+            } else {
+                pingResultLabel.text = "Ping testi devam ediyor"
             }
         }
     }
 }
-

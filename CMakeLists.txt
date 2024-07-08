@@ -1,12 +1,19 @@
 cmake_minimum_required(VERSION 3.16)
 
+# vcpkg paths
+set(VCPKG_ROOT "C:/Users/pc/vcpkg")  # vcpkg'nin doğru yolu ile değiştirin
+set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+
+# Include the vcpkg toolchain
+include(${CMAKE_TOOLCHAIN_FILE})
+
 project(YazilimYuklemeProjesi VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 6.2 REQUIRED COMPONENTS Quick)
-
+find_package(libssh CONFIG REQUIRED)
 
 qt_add_executable(appYazilimYuklemeProjesi
     main.cpp
@@ -18,6 +25,7 @@ qt_add_qml_module(appYazilimYuklemeProjesi
     QML_FILES
         Main.qml
         SOURCES pinghelper.h pinghelper.cpp
+        SOURCES sshhelper.h sshhelper.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -32,7 +40,7 @@ set_target_properties(appYazilimYuklemeProjesi PROPERTIES
 )
 
 target_link_libraries(appYazilimYuklemeProjesi
-    PRIVATE Qt6::Quick
+    PRIVATE Qt6::Quick ssh
 )
 
 include(GNUInstallDirs)
