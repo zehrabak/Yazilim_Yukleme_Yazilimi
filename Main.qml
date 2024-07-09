@@ -1,11 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Dialogs
 
 ApplicationWindow {
     visible: true
-    width: 400
-    height: 300
+    width: 600
+    height: 400
     title: "Yazılım Yükleme Projesi"
 
     GridLayout {
@@ -14,7 +15,6 @@ ApplicationWindow {
         rowSpacing: 10
         columnSpacing: 10
 
-        // Bağlan butonu ve sonuç label'ı ilk satırda olacak
         RowLayout {
             Layout.columnSpan: 4
 
@@ -49,13 +49,13 @@ ApplicationWindow {
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 20
                 onClicked: {
-                    sshHelper.connectToHost("hostname", "username", "password")
+                    sshHelper.connectToHost("10.255.0.45", "zehra", "12345")
                 }
             }
 
             Label {
                 id: sshResultLabel
-                text: ""  // Başlangıçta boş metin
+                text: ""
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 20
             }
@@ -75,10 +75,14 @@ ApplicationWindow {
             text: "Seç"
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
+            enabled: ubootCheckBox.checked
+
         }
+
         Label {
             text: "Label 1"
             Layout.fillWidth: true
+            enabled: ubootCheckBox.checked
         }
 
         Text {
@@ -94,10 +98,18 @@ ApplicationWindow {
             text: "Seç"
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
+            enabled: linuxCheckBox.checked
+            onClicked: {
+                if (linuxCheckBox.checked) {
+                    linuxFileDialog.open()
+                }
+            }
         }
         Label {
             text: "Label 2"
+            id: linuxFileLabel
             Layout.fillWidth: true
+            enabled: linuxCheckBox.checked
         }
 
         Text {
@@ -113,10 +125,18 @@ ApplicationWindow {
             text: "Seç"
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
+            enabled: rootfsCheckBox.checked
+            onClicked: {
+                if (rootfsCheckBox.checked) {
+                    rootfsFileDialog.open()
+                }
+            }
         }
         Label {
             text: "Label 3"
+            id: rootfsFileLabel
             Layout.fillWidth: true
+            enabled: rootfsCheckBox.checked
         }
 
         Item {
@@ -180,4 +200,33 @@ ApplicationWindow {
             }
         }
     }
+
+    FileDialog {
+        id: linuxFileDialog
+        title: "Linux Dosyasını Seçin"
+        onAccepted: {
+            console.log("Seçilen dosya: " + selectedFile)
+            linuxFileLabel.text = selectedFile
+            sshHelper.uploadFile(selectedFile, "/mnt/update");
+            // Burada dosya işlemlerini yap.
+        }
+        onRejected: {
+            console.log("Linux dosyası seçimi iptal edildi.")
+        }
+    }
+
+    FileDialog {
+        id: rootfsFileDialog
+        title: "Rootfs Dosyasını Seçin"
+
+        onAccepted: {
+            console.log("Seçilen dosya: " + selectedFile)
+            rootfsFileLabel.text = selectedFile
+            sshHelper.uploadFile(selectedFile, "/mnt/update");
+        }
+        onRejected: {
+            console.log("Rootfs dosyası seçimi iptal edildi.")
+        }
+    }
 }
+
