@@ -9,7 +9,7 @@ class PingHelper : public QObject {
     Q_OBJECT
 public:
     explicit PingHelper(QObject *parent = nullptr);
-    Q_INVOKABLE void ping();
+    Q_INVOKABLE void ping(const QString &ipAddress);
 
 signals:
     void pingInProgress();

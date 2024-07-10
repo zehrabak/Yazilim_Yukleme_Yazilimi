@@ -2,12 +2,29 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Dialogs
+import Qt.labs.settings 1.0
 
 ApplicationWindow {
     visible: true
     width: 600
     height: 400
     title: "Yazılım Yükleme Projesi"
+
+    property string selectedLinuxFile: ""
+    property string selectedRootfsFile: ""
+    property bool pingSuccessful: false
+    property bool sshConnected: false
+    property bool uploadComplete: false
+
+    Settings {
+        id: appSettings
+        property alias ipAddress: ipAddressLabel.text
+        category: "AppSettings"
+    }
+    Component.onCompleted: {
+            // Uygulama başlatıldığında kaydedilmiş IP adresini yükle
+            ipAddressLabel.text = appSettings.ipAddress
+    }
 
     GridLayout {
         anchors.fill: parent
@@ -17,28 +34,52 @@ ApplicationWindow {
 
         RowLayout {
             Layout.columnSpan: 4
+            Layout.topMargin: 20
 
-            Button {
-                id: connectButton
-                text: "Bağlan"
+            Text {
+                text: "IP Adresi:"
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 20
-                Layout.topMargin: 10
+                verticalAlignment: Text.AlignVCenter
+            }
+
+            TextField {
+                id: ipAddressField
+                placeholderText: "IP adresini girin"
+                Layout.alignment: Qt.AlignLeft
+                Layout.leftMargin: 10
+                width: 150
+            }
+
+            Button {
+                text: "Ping Testi"
+                Layout.alignment: Qt.AlignLeft
                 onClicked: {
-                    pingHelper.ping()
+                    var ip = ipAddressField.text.trim()
+                    if (ip !== "") {
+                        pingHelper.ping(ip)
+                        appSettings.ipAddress = ipAddressField.text
+                    } else {
+                        pingResultLabel.text = "Geçerli bir IP adresi girin."
+                    }
                 }
             }
 
             Label {
                 id: pingResultLabel
-                text: ""  // Başlangıçta boş metin
-                Layout.alignment: Qt.AlignLeft
-                Layout.leftMargin: 20
-                Layout.topMargin: 10
+                Layout.topMargin: 4
+                Layout.fillWidth: true
+                text: ""
+            }
+
+            Label {
+                    id: ipAddressLabel
+                    text: appSettings.ipAddress
+                    Layout.fillWidth: true
             }
         }
 
-        // SSH bağlantısı için alan
+
         RowLayout {
             Layout.columnSpan: 4
             Layout.topMargin: 20
@@ -48,20 +89,25 @@ ApplicationWindow {
                 text: "SSH Bağlan"
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 20
+                enabled: pingSuccessful
                 onClicked: {
-                    sshHelper.connectToHost("10.255.0.45", "zehra", "12345")
+                    var ip = ipAddressField.text.trim()
+                    if (ip !== "") {
+                        sshHelper.connectToHost(ip, "zehra", "12345")
+                    } else {
+                        sshResultLabel.text = "Geçerli bir IP adresi girin."
+                    }
                 }
             }
 
             Label {
                 id: sshResultLabel
+                Layout.topMargin: 4
+                Layout.fillWidth: true
                 text: ""
-                Layout.alignment: Qt.AlignLeft
-                Layout.leftMargin: 20
             }
         }
 
-        // Diğer içerikler buraya gelecek...
         Text {
             text: "u-boot"
             Layout.leftMargin: 20
@@ -70,19 +116,19 @@ ApplicationWindow {
             id: ubootCheckBox
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
+            enabled: sshConnected
         }
         Button {
             text: "Seç"
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
-            enabled: ubootCheckBox.checked
-
+            enabled: ubootCheckBox.checked && sshConnected
         }
 
         Label {
-            text: "Label 1"
+            text: "..."
             Layout.fillWidth: true
-            enabled: ubootCheckBox.checked
+            enabled: ubootCheckBox.checked && sshConnected
         }
 
         Text {
@@ -93,12 +139,13 @@ ApplicationWindow {
             id: linuxCheckBox
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
+            enabled: sshConnected
         }
         Button {
             text: "Seç"
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
-            enabled: linuxCheckBox.checked
+            enabled: linuxCheckBox.checked && sshConnected
             onClicked: {
                 if (linuxCheckBox.checked) {
                     linuxFileDialog.open()
@@ -106,10 +153,10 @@ ApplicationWindow {
             }
         }
         Label {
-            text: "Label 2"
+            text: "..."
             id: linuxFileLabel
             Layout.fillWidth: true
-            enabled: linuxCheckBox.checked
+            enabled: linuxCheckBox.checked && sshConnected
         }
 
         Text {
@@ -120,12 +167,13 @@ ApplicationWindow {
             id: rootfsCheckBox
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
+            enabled: sshConnected
         }
         Button {
             text: "Seç"
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
-            enabled: rootfsCheckBox.checked
+            enabled: rootfsCheckBox.checked && sshConnected
             onClicked: {
                 if (rootfsCheckBox.checked) {
                     rootfsFileDialog.open()
@@ -133,20 +181,89 @@ ApplicationWindow {
             }
         }
         Label {
-            text: "Label 3"
+            text: "..."
             id: rootfsFileLabel
             Layout.fillWidth: true
-            enabled: rootfsCheckBox.checked
+            enabled: rootfsCheckBox.checked && sshConnected
         }
 
         Item {
             Layout.rowSpan: 3
         }
-
-        Button {
-            text: "Başla"
-            Layout.alignment: Qt.AlignHCenter
+        ProgressBar {
+            id: progressBar
+            Layout.alignment: Qt.AlignLeft
             Layout.columnSpan: 4
+            visible: false
+            from: 0
+            to: 100
+            value: 0
+        }
+        Timer {
+            id: uploadTimer
+            interval: 1000
+            repeat: true
+            running: false
+            onTriggered: {
+                if (progressBar.value < 100) {
+                    progressBar.value += 1
+                } else {
+                    uploadTimer.stop()
+                    progressBar.visible = false
+                    uploadComplete = true
+                }
+            }
+        }
+        Button {
+            id: startButton
+            text: "Karşıya Yükle"
+            Layout.alignment: Qt.AlignLeft
+            Layout.columnSpan: 4
+            Layout.minimumWidth: 100
+            Layout.maximumWidth: 150
+            Layout.rightMargin: 20
+            enabled: sshConnected
+            onClicked: {
+                progressBar.visible = true
+                progressBar.value = 0
+                uploadTimer.start()
+
+                if (linuxCheckBox.checked) {
+                    sshHelper.uploadFile(linuxFileLabel.text, "/mnt/update")
+                }
+                if (rootfsCheckBox.checked) {
+                    sshHelper.uploadFile(rootfsFileLabel.text, "/mnt/update")
+                }
+
+                uploadTimer.stop()
+                progressBar.value = 100
+                progressBar.visible = true
+                uploadComplete = true
+            }
+        }
+
+        RowLayout {
+            Layout.columnSpan: 4
+            Layout.topMargin: 20
+
+            Button {
+                text: "Yazılımı Yükle"
+                Layout.alignment: Qt.AlignLeft
+                Layout.leftMargin: 20
+                enabled: sshConnected && uploadComplete
+                onClicked: {
+                    console.log(sshConnected)
+                    var result = sshHelper.executeRemoteCommand("touch /mnt/update/newfile.txt")
+                    resultLabel.text = result
+                }
+            }
+
+            Label {
+                id: resultLabel
+                Layout.alignment: Qt.AlignLeft
+                Layout.leftMargin: 10
+                text: ""
+            }
         }
 
         Connections {
@@ -157,13 +274,15 @@ ApplicationWindow {
             }
             onPingSuccess: {
                 pingResultLabel.text = "Ping başarılı"
-                pingResultLabel.color = "green"  // Başarılı durum için yeşil renk
+                pingResultLabel.color = "green"
                 pingAnimation.running = false
+                pingSuccessful = true;
             }
             onPingFailed: {
                 pingResultLabel.text = "Ping başarısız"
-                pingResultLabel.color = "red"  // Başarısız durum için kırmızı renk
+                pingResultLabel.color = "red"
                 pingAnimation.running = false
+                pingSuccessful = false;
             }
         }
 
@@ -172,10 +291,12 @@ ApplicationWindow {
             onSshConnected: {
                 sshResultLabel.text = "SSH bağlantısı başarılı"
                 sshResultLabel.color = "green"
+                sshConnected = true;
             }
             onSshConnectionFailed: {
                 sshResultLabel.text = "SSH bağlantısı başarısız"
                 sshResultLabel.color = "red"
+                sshConnected = false;
             }
             onSshMessage: {
                 sshResultLabel.text = message
@@ -207,8 +328,7 @@ ApplicationWindow {
         onAccepted: {
             console.log("Seçilen dosya: " + selectedFile)
             linuxFileLabel.text = selectedFile
-            sshHelper.uploadFile(selectedFile, "/mnt/update");
-            // Burada dosya işlemlerini yap.
+            selectedLinuxFile = selectedFile
         }
         onRejected: {
             console.log("Linux dosyası seçimi iptal edildi.")
@@ -218,15 +338,13 @@ ApplicationWindow {
     FileDialog {
         id: rootfsFileDialog
         title: "Rootfs Dosyasını Seçin"
-
         onAccepted: {
             console.log("Seçilen dosya: " + selectedFile)
             rootfsFileLabel.text = selectedFile
-            sshHelper.uploadFile(selectedFile, "/mnt/update");
+            selectedRootfsFile = selectedFile
         }
         onRejected: {
             console.log("Rootfs dosyası seçimi iptal edildi.")
         }
     }
 }
-

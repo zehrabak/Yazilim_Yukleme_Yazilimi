@@ -6,9 +6,9 @@ PingHelper::PingHelper(QObject *parent) : QObject(parent) {
             this, &PingHelper::onPingFinished);
 }
 
-void PingHelper::ping() {
+void PingHelper::ping(const QString &ipAddress) {
     emit pingInProgress();
-    process.start("ping", QStringList() << "192.168.1.1");
+    process.start("ping", QStringList() << ipAddress);
 }
 
 void PingHelper::onPingFinished() {
