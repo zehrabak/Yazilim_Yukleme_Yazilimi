@@ -3,15 +3,19 @@
 #include <QQmlContext>
 #include "PingHelper.h"
 #include "SshHelper.h"
-
+#include <QSettings>
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    app.setOrganizationName("Some Company");
+    app.setOrganizationDomain("somecompany.com");
+    app.setApplicationName("Amazing Application");
+
     QQmlApplicationEngine engine;
     PingHelper pingHelper;
-
     engine.rootContext()->setContextProperty("pingHelper", &pingHelper);
+
 
     SshHelper sshHelper;
     engine.rootContext()->setContextProperty("sshHelper", &sshHelper);

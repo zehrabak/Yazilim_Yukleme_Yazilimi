@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Dialogs
-import Qt.labs.settings 1.0
+import QtCore
 
 ApplicationWindow {
     visible: true
@@ -17,13 +17,9 @@ ApplicationWindow {
     property bool uploadComplete: false
 
     Settings {
-        id: appSettings
-        property alias ipAddress: ipAddressLabel.text
-        category: "AppSettings"
-    }
-    Component.onCompleted: {
-            // Uygulama başlatıldığında kaydedilmiş IP adresini yükle
-            ipAddressLabel.text = appSettings.ipAddress
+        id: ipSettings
+        property alias ip: ipAddressField.text
+
     }
 
     GridLayout {
@@ -58,7 +54,7 @@ ApplicationWindow {
                     var ip = ipAddressField.text.trim()
                     if (ip !== "") {
                         pingHelper.ping(ip)
-                        appSettings.ipAddress = ipAddressField.text
+                        ipAddressLabel.text = ip
                     } else {
                         pingResultLabel.text = "Geçerli bir IP adresi girin."
                     }
@@ -72,11 +68,6 @@ ApplicationWindow {
                 text: ""
             }
 
-            Label {
-                    id: ipAddressLabel
-                    text: appSettings.ipAddress
-                    Layout.fillWidth: true
-            }
         }
 
 
@@ -253,7 +244,7 @@ ApplicationWindow {
                 enabled: sshConnected && uploadComplete
                 onClicked: {
                     console.log(sshConnected)
-                    var result = sshHelper.executeRemoteCommand("touch /mnt/update/newfile.txt")
+                    var result = sshHelper.executeRemoteCommand("sync && reboot now")
                     resultLabel.text = result
                 }
             }
@@ -347,4 +338,9 @@ ApplicationWindow {
             console.log("Rootfs dosyası seçimi iptal edildi.")
         }
     }
+
+    Component.onDestruction: {
+        ipSettings.ip = ipAddressField.text
+    }
 }
+
