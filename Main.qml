@@ -9,6 +9,7 @@ ApplicationWindow {
     width: 600
     height: 400
     title: "Yazılım Yükleme Projesi"
+    color: "lightgrey"
 
     property string selectedLinuxFile: ""
     property string selectedRootfsFile: ""
@@ -19,7 +20,6 @@ ApplicationWindow {
     Settings {
         id: ipSettings
         property alias ip: ipAddressField.text
-
     }
 
     GridLayout {
@@ -37,6 +37,8 @@ ApplicationWindow {
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 20
                 verticalAlignment: Text.AlignVCenter
+                color: "black"
+                font.bold: true
             }
 
             TextField {
@@ -50,11 +52,15 @@ ApplicationWindow {
             Button {
                 text: "Ping Testi"
                 Layout.alignment: Qt.AlignLeft
+                background: Rectangle {
+                    color: "#3498db"
+                    radius: 5
+                }
+
                 onClicked: {
                     var ip = ipAddressField.text.trim()
                     if (ip !== "") {
                         pingHelper.ping(ip)
-                        ipAddressLabel.text = ip
                     } else {
                         pingResultLabel.text = "Geçerli bir IP adresi girin."
                     }
@@ -67,9 +73,7 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 text: ""
             }
-
         }
-
 
         RowLayout {
             Layout.columnSpan: 4
@@ -80,6 +84,11 @@ ApplicationWindow {
                 text: "SSH Bağlan"
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 20
+                background: Rectangle {
+                    color: "#3498db"
+                    radius: 5
+                }
+
                 enabled: pingSuccessful
                 onClicked: {
                     var ip = ipAddressField.text.trim()
@@ -102,6 +111,7 @@ ApplicationWindow {
         Text {
             text: "u-boot"
             Layout.leftMargin: 20
+            color: "darkblue"
         }
         CheckBox {
             id: ubootCheckBox
@@ -114,6 +124,11 @@ ApplicationWindow {
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
             enabled: ubootCheckBox.checked && sshConnected
+            background: Rectangle {
+                color: "#3498db"
+                radius: 5
+            }
+
         }
 
         Label {
@@ -125,18 +140,25 @@ ApplicationWindow {
         Text {
             text: "linux"
             Layout.leftMargin: 20
+            color: "darkblue"
         }
         CheckBox {
             id: linuxCheckBox
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
             enabled: sshConnected
+
         }
         Button {
             text: "Seç"
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
             enabled: linuxCheckBox.checked && sshConnected
+            background: Rectangle {
+                color: "#3498db"
+                radius: 5
+            }
+
             onClicked: {
                 if (linuxCheckBox.checked) {
                     linuxFileDialog.open()
@@ -153,18 +175,24 @@ ApplicationWindow {
         Text {
             text: "rootfs"
             Layout.leftMargin: 20
+            color: "darkblue"
         }
         CheckBox {
             id: rootfsCheckBox
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
             enabled: sshConnected
+
         }
         Button {
             text: "Seç"
             Layout.minimumWidth: 50
             Layout.maximumWidth: 50
             enabled: rootfsCheckBox.checked && sshConnected
+            background: Rectangle {
+                color: "#3498db"
+                radius: 5
+            }
             onClicked: {
                 if (rootfsCheckBox.checked) {
                     rootfsFileDialog.open()
@@ -213,7 +241,12 @@ ApplicationWindow {
             Layout.minimumWidth: 100
             Layout.maximumWidth: 150
             Layout.rightMargin: 20
+            Layout.leftMargin: 20
             enabled: sshConnected
+            background: Rectangle {
+                color: "#3498db"
+                radius: 5
+            }
             onClicked: {
                 progressBar.visible = true
                 progressBar.value = 0
@@ -242,6 +275,10 @@ ApplicationWindow {
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 20
                 enabled: sshConnected && uploadComplete
+                background: Rectangle {
+                    color: "#3498db"
+                    radius: 5
+                }
                 onClicked: {
                     console.log(sshConnected)
                     var result = sshHelper.executeRemoteCommand("sync && reboot now")
@@ -312,35 +349,33 @@ ApplicationWindow {
             }
         }
     }
-
     FileDialog {
-        id: linuxFileDialog
-        title: "Linux Dosyasını Seçin"
-        onAccepted: {
-            console.log("Seçilen dosya: " + selectedFile)
-            linuxFileLabel.text = selectedFile
-            selectedLinuxFile = selectedFile
-        }
-        onRejected: {
-            console.log("Linux dosyası seçimi iptal edildi.")
-        }
-    }
+         id: linuxFileDialog
+         title: "Linux Dosyasını Seçin"
+         onAccepted: {
+             console.log("Seçilen dosya: " + selectedFile)
+             linuxFileLabel.text = selectedFile
+             selectedLinuxFile = selectedFile
+         }
+         onRejected: {
+             console.log("Linux dosyası seçimi iptal edildi.")
+         }
+     }
 
-    FileDialog {
-        id: rootfsFileDialog
-        title: "Rootfs Dosyasını Seçin"
-        onAccepted: {
-            console.log("Seçilen dosya: " + selectedFile)
-            rootfsFileLabel.text = selectedFile
-            selectedRootfsFile = selectedFile
-        }
-        onRejected: {
-            console.log("Rootfs dosyası seçimi iptal edildi.")
-        }
-    }
+     FileDialog {
+         id: rootfsFileDialog
+         title: "Rootfs Dosyasını Seçin"
+         onAccepted: {
+             console.log("Seçilen dosya: " + selectedFile)
+             rootfsFileLabel.text = selectedFile
+             selectedRootfsFile = selectedFile
+         }
+         onRejected: {
+             console.log("Rootfs dosyası seçimi iptal edildi.")
+         }
+     }
 
-    Component.onDestruction: {
-        ipSettings.ip = ipAddressField.text
-    }
+     Component.onDestruction: {
+         ipSettings.ip = ipAddressField.text
+     }
 }
-

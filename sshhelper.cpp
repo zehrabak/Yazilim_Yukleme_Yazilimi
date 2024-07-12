@@ -130,7 +130,7 @@ bool SshHelper::uploadFile(const QString &localFilePath, const QString &remoteDi
     ssh_scp_free(scp);
 
     qDebug() << "File uploaded successfully.";
-    emit sshMessage("File uploaded successfully.");
+    emit sshMessage("Ssh bağlantısı başarıyla kuruldu.");
     return true;
 }
 
