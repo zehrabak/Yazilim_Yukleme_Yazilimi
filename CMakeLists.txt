@@ -18,6 +18,8 @@ find_package(libssh CONFIG REQUIRED)
 
 qt_add_executable(appYazilimYuklemeProjesi
     main.cpp
+    pinghelper.cpp
+    sshhelper.cpp
 )
 
 qt_add_qml_module(appYazilimYuklemeProjesi
@@ -25,7 +27,6 @@ qt_add_qml_module(appYazilimYuklemeProjesi
     VERSION 1.0
     QML_FILES
         Main.qml
-        SOURCES pinghelper.h pinghelper.cpp sshhelper.h sshhelper.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

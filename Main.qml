@@ -306,6 +306,7 @@ ApplicationWindow {
                             Layout.columnSpan: 1
                             Layout.row: 0
                             color: "darkblue"
+
                         }
                         Button {
                             text: "Seç"
@@ -487,13 +488,13 @@ ApplicationWindow {
                     sshHelper.uploadFile(rootfsFileLabel.text, "/mnt/update")
                 }
                 if (bekbComboBox.currentText === "BKB1"){
-                    sshHelper.uploadFile(bekb1FileLabel.text, "/mnt/update")
+                    sshHelper.uploadFile(bekb1Filelabel.text, "/mnt/update")
                 }
                 if (bekbComboBox.currentText === "BKB2"){
-                    sshHelper.uploadFile(bekb2FileLabel.text, "/mnt/update")
+                    sshHelper.uploadFile(bekb2Filelabel.text, "/mnt/update")
                 }
                 if (bekbComboBox.currentText === "BKB3"){
-                    sshHelper.uploadFile(bekb3FileLabel.text, "/mnt/update")
+                    sshHelper.uploadFile(bekb3Filelabel.text, "/mnt/update")
                 }
                 if (skpFilelabel !== "...") {
                     sshHelper.uploadFile(skpFilelabel.text, "/mnt/update")
