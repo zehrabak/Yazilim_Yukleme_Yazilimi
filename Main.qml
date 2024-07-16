@@ -267,86 +267,225 @@ ApplicationWindow {
                 }
 
             }
+           /* Item {
 
+                    ColumnLayout {
+
+                        ComboBox {
+                            id:bekbComboBox
+                            Layout.alignment: Qt.AlignHCenter
+                            Layout.topMargin: 20
+                            width: parent.width / 2
+                            model: ["BKB1", "BKB2", "BKB3"]
+                            onCurrentTextChanged: {
+                                switch (currentText) {
+                                    case "BKB1":
+                                    fileDialog1.title = "BKB1 Dosyasını Seçin"
+                                    break;
+                                    case "BKB2":
+                                    fileDialog1.title = "BKB2 Dosyasını Seçin"
+                                    break;
+                                    case "BKB3":
+                                    fileDialog1.title = "BKB3 Dosyasını Seçin"
+                                    break;
+                                }
+                            }
+                        }
+                        GridLayout {
+                            columns: 4
+                            rowSpacing: 10
+                            columnSpacing: 10
+                            id: gridLayoutBekb
+
+                            // u-boot Row
+                            Text {
+                                text: "u-boot"
+                                Layout.leftMargin: 20
+                                Layout.alignment: Qt.AlignLeft
+                                Layout.columnSpan: 1
+                                Layout.row: 0
+                                color: "darkblue"
+
+                            }
+                            Button {
+                                text: "Seç"
+                                Layout.alignment: Qt.AlignLeft
+                                Layout.column: 2
+                                Layout.row: 0
+                                enabled: sshConnected
+                                background: Rectangle {
+                                    color: "#3498db"
+                                    radius: 5
+                                }
+                                onClicked: {
+                                    fileDialog1.open()
+                                }
+                            }
+                            Label {
+                                text: "..."
+                                id: bekb1Filelabel
+                                Layout.fillWidth: true
+                                Layout.column: 3
+                                Layout.row: 0
+                                enabled:sshConnected
+                            }
+                            Label {
+                                text: "..."
+                                id: bekb2Filelabel
+                                Layout.fillWidth: true
+                                Layout.column: 3
+                                Layout.row: 1
+                                enabled:sshConnected
+                            }
+                            Label {
+                                text: "..."
+                                id: bekb3Filelabel
+                                Layout.fillWidth: true
+                                Layout.column: 3
+                                Layout.row: 2
+                                enabled:sshConnected
+                            }
+
+                        }
+                    }
+                } */
             Item {
 
                 ColumnLayout {
+                      anchors.fill: parent
 
-                    ComboBox {
-                        id:bekbComboBox
-                        Layout.alignment: Qt.AlignHCenter
-                        Layout.topMargin: 20
-                        width: parent.width / 2
-                        model: ["BKB1", "BKB2", "BKB3"]
-                        onCurrentTextChanged: {
-                            switch (currentText) {
-                                case "BKB1":
-                                fileDialog1.title = "BKB1 Dosyasını Seçin"
-                                break;
-                                case "BKB2":
-                                fileDialog1.title = "BKB2 Dosyasını Seçin"
-                                break;
-                                case "BKB3":
-                                fileDialog1.title = "BKB3 Dosyasını Seçin"
-                                break;
-                            }
-                        }
-                    }
-                    GridLayout {
-                        columns: 4
-                        rowSpacing: 10
-                        columnSpacing: 10
-                        id: gridLayoutBekb
+                      ComboBox {
+                          id: bekbComboBox
+                          Layout.alignment: Qt.AlignLeft
+                          Layout.leftMargin: 30
 
-                        // u-boot Row
-                        Text {
-                            text: "u-boot"
-                            Layout.leftMargin: 20
-                            Layout.alignment: Qt.AlignLeft
-                            Layout.columnSpan: 1
-                            Layout.row: 0
-                            color: "darkblue"
+                          width: parent.width / 2
+                          model: ["BKB1", "BKB2", "BKB3"]
+                          onCurrentTextChanged: {
+                              switch (currentText) {
+                                  case "BKB1":
+                                  fileDialog1.title = "BKB1 Dosyasını Seçin"
+                                  break;
+                                  case "BKB2":
+                                  fileDialog1.title = "BKB2 Dosyasını Seçin"
+                                  break;
+                                  case "BKB3":
+                                  fileDialog1.title = "BKB3 Dosyasını Seçin"
+                                  break;
+                              }
+                          }
+                      }
 
-                        }
-                        Button {
-                            text: "Seç"
-                            Layout.alignment: Qt.AlignLeft
-                            Layout.column: 2
-                            Layout.row: 0
-                            enabled: sshConnected
-                            background: Rectangle {
-                                color: "#3498db"
-                                radius: 5
-                            }
-                            onClicked: {
-                                fileDialog1.open()
-                            }
-                        }
-                        Label {
-                            text: "..."
-                            id: bekb1Filelabel
-                            Layout.fillWidth: true
-                            Layout.column: 3
-                            Layout.row: 0
-                            enabled:sshConnected
-                        }
-                        Label {
-                            text: "..."
-                            id: bekb2Filelabel
-                            Layout.fillWidth: true
-                            Layout.column: 3
-                            Layout.row: 1
-                            enabled:sshConnected
-                        }
-                        Label {
-                            text: "..."
-                            id: bekb3Filelabel
-                            Layout.fillWidth: true
-                            Layout.column: 3
-                            Layout.row: 2
-                            enabled:sshConnected
-                        }
+                      GridLayout {
+                          columns: 4
+                          rowSpacing: 10
+                          columnSpacing: 10
+                          id: gridLayoutBekb
 
+                          // BKB1 Row
+                          Text {
+                              text: "u-boot"
+                              Layout.leftMargin: 20
+                              Layout.alignment: Qt.AlignLeft
+                              Layout.columnSpan: 1
+                              Layout.row: 0
+                              color: "darkblue"
+                              visible: bekbComboBox.currentText === "BKB1"
+                          }
+                          Button {
+                              text: "Seç"
+                              Layout.alignment: Qt.AlignLeft
+                              Layout.column: 2
+                              Layout.row: 0
+                              enabled: sshConnected
+                              background: Rectangle {
+                                  color: "#3498db"
+                                  radius: 5
+                              }
+                              onClicked: {
+                                  fileDialog1.open()
+                              }
+                              visible: bekbComboBox.currentText === "BKB1"
+                          }
+                          Label {
+                              text: "..."
+                              id: bekb1Filelabel
+                              Layout.fillWidth: true
+                              Layout.column: 3
+                              Layout.row: 0
+                              enabled: sshConnected
+                              visible: bekbComboBox.currentText === "BKB1"
+                          }
+
+                          // BKB2 Row
+                          Text {
+                              text: "u-boot"
+                              Layout.leftMargin: 20
+                              Layout.alignment: Qt.AlignLeft
+                              Layout.columnSpan: 1
+                              Layout.row: 0
+                              color: "darkblue"
+                              visible: bekbComboBox.currentText === "BKB2"
+                          }
+                          Button {
+                              text: "Seç"
+                              Layout.alignment: Qt.AlignLeft
+                              Layout.column: 2
+                              Layout.row: 0
+                              enabled: sshConnected
+                              background: Rectangle {
+                                  color: "#3498db"
+                                  radius: 5
+                              }
+                              onClicked: {
+                                  fileDialog1.open()
+                              }
+                              visible: bekbComboBox.currentText === "BKB2"
+                          }
+                          Label {
+                              text: "..."
+                              id: bekb2Filelabel
+                              Layout.fillWidth: true
+                              Layout.column: 3
+                              Layout.row: 0
+                              enabled: sshConnected
+                              visible: bekbComboBox.currentText === "BKB2"
+                          }
+
+                          // BKB3 Row
+                          Text {
+                              text: "u-boot"
+                              Layout.leftMargin: 20
+                              Layout.alignment: Qt.AlignLeft
+                              Layout.columnSpan: 1
+                              Layout.row: 0
+                              color: "darkblue"
+                              visible: bekbComboBox.currentText === "BKB3"
+                          }
+                          Button {
+                              text: "Seç"
+                              Layout.alignment: Qt.AlignLeft
+                              Layout.column: 2
+                              Layout.row: 0
+                              enabled: sshConnected
+                              background: Rectangle {
+                                  color: "#3498db"
+                                  radius: 5
+                              }
+                              onClicked: {
+                                  fileDialog1.open()
+                              }
+                              visible: bekbComboBox.currentText === "BKB3"
+                          }
+                          Label {
+                              text: "..."
+                              id: bekb3Filelabel
+                              Layout.fillWidth: true
+                              Layout.column: 3
+                              Layout.row: 0
+                              enabled: sshConnected
+                              visible: bekbComboBox.currentText === "BKB3"
+                        }
                     }
                 }
             }
@@ -487,13 +626,13 @@ ApplicationWindow {
                 if (rootfsCheckBox.checked) {
                     sshHelper.uploadFile(rootfsFileLabel.text, "/mnt/update")
                 }
-                if (bekbComboBox.currentText === "BKB1"){
+                if ( bekb1Filelabel.text !== "..."){
                     sshHelper.uploadFile(bekb1Filelabel.text, "/mnt/update")
                 }
-                if (bekbComboBox.currentText === "BKB2"){
+                if (bekb2Filelabel.text !== "..."){
                     sshHelper.uploadFile(bekb2Filelabel.text, "/mnt/update")
                 }
-                if (bekbComboBox.currentText === "BKB3"){
+                if (bekb3Filelabel.text !== "..."){
                     sshHelper.uploadFile(bekb3Filelabel.text, "/mnt/update")
                 }
                 if (skpFilelabel !== "...") {
