@@ -133,4 +133,3 @@ bool SshHelper::uploadFile(const QString &localFilePath, const QString &remoteDi
     emit sshMessage("Ssh bağlantısı başarıyla kuruldu.");
     return true;
 }
-

@@ -3,16 +3,22 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Dialogs
 import QtCore
+import QtQuick.Controls.Material 2.15
 
 ApplicationWindow {
     visible: true
-    width: 600
-    height: 400
+    width: 700
+    height: 500
     title: "Yazılım Yükleme Projesi"
     color: "lightgrey"
 
     property string selectedLinuxFile: ""
     property string selectedRootfsFile: ""
+    property string selectedBEKB1File: ""
+    property string selectedBEKB2File: ""
+    property string selectedBEKB3File: ""
+    property string selectedSKPFile: ""
+    property string selectedGGAPFile: ""
     property bool pingSuccessful: false
     property bool sshConnected: false
     property bool uploadComplete: false
@@ -22,15 +28,13 @@ ApplicationWindow {
         property alias ip: ipAddressField.text
     }
 
-    GridLayout {
+    ColumnLayout {
         anchors.fill: parent
-        columns: 4
-        rowSpacing: 10
-        columnSpacing: 10
 
         RowLayout {
             Layout.columnSpan: 4
             Layout.topMargin: 20
+            Layout.alignment: Qt.AlignHCenter
 
             Text {
                 text: "IP Adresi:"
@@ -78,10 +82,11 @@ ApplicationWindow {
         RowLayout {
             Layout.columnSpan: 4
             Layout.topMargin: 20
+            Layout.alignment: Qt.AlignHCenter
 
             Button {
                 id: sshConnectButton
-                text: "SSH Bağlan"
+                text: "SSH Testi"
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 20
                 background: Rectangle {
@@ -92,6 +97,7 @@ ApplicationWindow {
                 enabled: pingSuccessful
                 onClicked: {
                     var ip = ipAddressField.text.trim()
+
                     if (ip !== "") {
                         sshHelper.connectToHost(ip, "zehra", "12345")
                     } else {
@@ -108,107 +114,329 @@ ApplicationWindow {
             }
         }
 
-        Text {
-            text: "u-boot"
-            Layout.leftMargin: 20
-            color: "darkblue"
+        TabBar {
+            id: bar
+            width: parent.width
+            contentWidth: 700
+
+            TabButton {
+                text: "AGP"
+                onClicked: bar.currentIndex = 0
+            }
+            TabButton {
+                text: "BEKB"
+                onClicked: bar.currentIndex = 1
+            }
+            TabButton {
+                text: "SKP"
+                onClicked: bar.currentIndex = 2
+            }
+            TabButton {
+                text: "GGAP"
+                onClicked: bar.currentIndex = 3
+            }
         }
-        CheckBox {
-            id: ubootCheckBox
-            Layout.minimumWidth: 50
-            Layout.maximumWidth: 50
-            enabled: sshConnected
-        }
-        Button {
-            text: "Seç"
-            Layout.minimumWidth: 50
-            Layout.maximumWidth: 50
-            enabled: ubootCheckBox.checked && sshConnected
-            background: Rectangle {
-                color: "#3498db"
-                radius: 5
+
+        StackLayout {
+            id: stack
+            width: parent.width
+            currentIndex: bar.currentIndex
+
+            Item {
+                GridLayout {
+                    columns: 4
+                    rowSpacing: 10
+                    columnSpacing: 10
+
+                    // u-boot Row
+                    Text {
+                        text: "u-boot"
+                        Layout.leftMargin: 20
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.columnSpan: 1
+                        Layout.row: 0
+                        color: "darkblue"
+                    }
+                    CheckBox {
+                        id: ubootCheckBox
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.column: 1
+                        Layout.row: 0
+                        enabled: sshConnected
+                    }
+                    Button {
+                        text: "Seç"
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.column: 2
+                        Layout.row: 0
+                        enabled: ubootCheckBox.checked && sshConnected
+                        background: Rectangle {
+                            color: "#3498db"
+                            radius: 5
+                        }
+                    }
+                    Label {
+                        text: "..."
+                        Layout.fillWidth: true
+                        Layout.column: 3
+                        Layout.row: 0
+                        enabled: ubootCheckBox.checked && sshConnected
+                    }
+
+                    // linux Row
+                    Text {
+                        text: "linux"
+                        Layout.leftMargin: 20
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.columnSpan: 1
+                        Layout.row: 1
+                        color: "darkblue"
+                    }
+                    CheckBox {
+                        id: linuxCheckBox
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.column: 1
+                        Layout.row: 1
+                        enabled: sshConnected
+                    }
+                    Button {
+                        text: "Seç"
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.column: 2
+                        Layout.row: 1
+                        enabled: linuxCheckBox.checked && sshConnected
+                        background: Rectangle {
+                            color: "#3498db"
+                            radius: 5
+                        }
+                        onClicked: {
+                            if (linuxCheckBox.checked) {
+                                linuxFileDialog.open()
+                            }
+                        }
+                    }
+                    Label {
+                        text: "..."
+                        id: linuxFileLabel
+                        Layout.fillWidth: true
+                        Layout.column: 3
+                        Layout.row: 1
+                        enabled: linuxCheckBox.checked && sshConnected
+                    }
+
+                    // rootfs Row
+                    Text {
+                        text: "rootfs"
+                        Layout.leftMargin: 20
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.columnSpan: 1
+                        Layout.row: 2
+                        color: "darkblue"
+                    }
+                    CheckBox {
+                        id: rootfsCheckBox
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.column: 1
+                        Layout.row: 2
+                        enabled: sshConnected
+                    }
+                    Button {
+                        text: "Seç"
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.column: 2
+                        Layout.row: 2
+                        enabled: rootfsCheckBox.checked && sshConnected
+                        background: Rectangle {
+                            color: "#3498db"
+                            radius: 5
+                        }
+                        onClicked: {
+                            if (rootfsCheckBox.checked) {
+                                rootfsFileDialog.open()
+                            }
+                        }
+                    }
+                    Label {
+                        text: "..."
+                        id: rootfsFileLabel
+                        Layout.fillWidth: true
+                        Layout.column: 3
+                        Layout.row: 2
+                        enabled: rootfsCheckBox.checked && sshConnected
+                    }
+                }
+
             }
 
-        }
+            Item {
 
-        Label {
-            text: "..."
-            Layout.fillWidth: true
-            enabled: ubootCheckBox.checked && sshConnected
-        }
+                ColumnLayout {
 
-        Text {
-            text: "linux"
-            Layout.leftMargin: 20
-            color: "darkblue"
-        }
-        CheckBox {
-            id: linuxCheckBox
-            Layout.minimumWidth: 50
-            Layout.maximumWidth: 50
-            enabled: sshConnected
+                    ComboBox {
+                        id:bekbComboBox
+                        Layout.alignment: Qt.AlignHCenter
+                        Layout.topMargin: 20
+                        width: parent.width / 2
+                        model: ["BKB1", "BKB2", "BKB3"]
+                        onCurrentTextChanged: {
+                            switch (currentText) {
+                                case "BKB1":
+                                fileDialog1.title = "BKB1 Dosyasını Seçin"
+                                break;
+                                case "BKB2":
+                                fileDialog1.title = "BKB2 Dosyasını Seçin"
+                                break;
+                                case "BKB3":
+                                fileDialog1.title = "BKB3 Dosyasını Seçin"
+                                break;
+                            }
+                        }
+                    }
+                    GridLayout {
+                        columns: 4
+                        rowSpacing: 10
+                        columnSpacing: 10
+                        id: gridLayoutBekb
 
-        }
-        Button {
-            text: "Seç"
-            Layout.minimumWidth: 50
-            Layout.maximumWidth: 50
-            enabled: linuxCheckBox.checked && sshConnected
-            background: Rectangle {
-                color: "#3498db"
-                radius: 5
-            }
+                        // u-boot Row
+                        Text {
+                            text: "u-boot"
+                            Layout.leftMargin: 20
+                            Layout.alignment: Qt.AlignLeft
+                            Layout.columnSpan: 1
+                            Layout.row: 0
+                            color: "darkblue"
+                        }
+                        Button {
+                            text: "Seç"
+                            Layout.alignment: Qt.AlignLeft
+                            Layout.column: 2
+                            Layout.row: 0
+                            enabled: sshConnected
+                            background: Rectangle {
+                                color: "#3498db"
+                                radius: 5
+                            }
+                            onClicked: {
+                                fileDialog1.open()
+                            }
+                        }
+                        Label {
+                            text: "..."
+                            id: bekb1Filelabel
+                            Layout.fillWidth: true
+                            Layout.column: 3
+                            Layout.row: 0
+                            enabled:sshConnected
+                        }
+                        Label {
+                            text: "..."
+                            id: bekb2Filelabel
+                            Layout.fillWidth: true
+                            Layout.column: 3
+                            Layout.row: 1
+                            enabled:sshConnected
+                        }
+                        Label {
+                            text: "..."
+                            id: bekb3Filelabel
+                            Layout.fillWidth: true
+                            Layout.column: 3
+                            Layout.row: 2
+                            enabled:sshConnected
+                        }
 
-            onClicked: {
-                if (linuxCheckBox.checked) {
-                    linuxFileDialog.open()
+                    }
                 }
             }
-        }
-        Label {
-            text: "..."
-            id: linuxFileLabel
-            Layout.fillWidth: true
-            enabled: linuxCheckBox.checked && sshConnected
-        }
 
-        Text {
-            text: "rootfs"
-            Layout.leftMargin: 20
-            color: "darkblue"
-        }
-        CheckBox {
-            id: rootfsCheckBox
-            Layout.minimumWidth: 50
-            Layout.maximumWidth: 50
-            enabled: sshConnected
+            Item {
+                ColumnLayout {
+                    GridLayout {
+                       columns: 4
+                        rowSpacing: 20
+                        columnSpacing: 20
+                        Layout.topMargin: 20
 
-        }
-        Button {
-            text: "Seç"
-            Layout.minimumWidth: 50
-            Layout.maximumWidth: 50
-            enabled: rootfsCheckBox.checked && sshConnected
-            background: Rectangle {
-                color: "#3498db"
-                radius: 5
-            }
-            onClicked: {
-                if (rootfsCheckBox.checked) {
-                    rootfsFileDialog.open()
+                        // u-boot Row
+                        Text {
+                            text: "u-boot"
+                            Layout.leftMargin: 20
+                            Layout.alignment: Qt.AlignLeft
+                            Layout.columnSpan: 1
+                            Layout.row: 0
+                            color: "darkblue"
+                        }
+                        Button {
+                            text: "Seç"
+                            Layout.alignment: Qt.AlignLeft
+                            Layout.column: 2
+                            Layout.row: 0
+                            enabled: sshConnected
+                            background: Rectangle {
+                                color: "#3498db"
+                                radius: 5
+                            }
+                            onClicked: {
+                                fileDialog.title = "SKP Dosyasını Seçin"
+                                fileDialog.open()
+                            }
+                        }
+                        Label {
+                            text: "..."
+                            id: skpFilelabel
+                            Layout.fillWidth: true
+                            Layout.column: 3
+                            Layout.row: 0
+                            enabled:sshConnected
+                        }
+                    }
                 }
-            }
         }
-        Label {
-            text: "..."
-            id: rootfsFileLabel
-            Layout.fillWidth: true
-            enabled: rootfsCheckBox.checked && sshConnected
+            Item {
+                ColumnLayout {
+                    GridLayout {
+                        columns: 4
+                        rowSpacing: 20
+                        columnSpacing: 20
+                        Layout.topMargin: 20
+
+                        // u-boot Row
+                        Text {
+                            text: "u-boot"
+                            Layout.leftMargin: 20
+                            Layout.alignment: Qt.AlignLeft
+                            Layout.columnSpan: 1
+                            Layout.row: 0
+                            color: "darkblue"
+                        }
+                        Button {
+                            text: "Seç"
+                            Layout.alignment: Qt.AlignLeft
+                            Layout.column: 2
+                            Layout.row: 0
+                            enabled: sshConnected
+                            background: Rectangle {
+                                color: "#3498db"
+                                radius: 5
+                            }
+                            onClicked: {
+                                fileDialog.title = "GGAP Dosyasını Seçin"
+                                fileDialog.open()
+                            }
+                        }
+                        Label {
+                            text: "..."
+                            id: ggapFilelabel
+                            Layout.fillWidth: true
+                            Layout.column: 3
+                            Layout.row: 0
+                            enabled:sshConnected
+                        }
+                    }
+            }   }
         }
 
-        Item {
-            Layout.rowSpan: 3
-        }
         ProgressBar {
             id: progressBar
             Layout.alignment: Qt.AlignLeft
@@ -258,7 +486,21 @@ ApplicationWindow {
                 if (rootfsCheckBox.checked) {
                     sshHelper.uploadFile(rootfsFileLabel.text, "/mnt/update")
                 }
-
+                if (bekbComboBox.currentText === "BKB1"){
+                    sshHelper.uploadFile(bekb1FileLabel.text, "/mnt/update")
+                }
+                if (bekbComboBox.currentText === "BKB2"){
+                    sshHelper.uploadFile(bekb2FileLabel.text, "/mnt/update")
+                }
+                if (bekbComboBox.currentText === "BKB3"){
+                    sshHelper.uploadFile(bekb3FileLabel.text, "/mnt/update")
+                }
+                if (skpFilelabel !== "...") {
+                    sshHelper.uploadFile(skpFilelabel.text, "/mnt/update")
+                }
+                if (ggapFilelabel !== "...") {
+                    sshHelper.uploadFile(ggapFilelabel.text, "/mnt/update")
+                }
                 uploadTimer.stop()
                 progressBar.value = 100
                 progressBar.visible = true
@@ -327,55 +569,104 @@ ApplicationWindow {
                 sshConnected = false;
             }
             onSshMessage: {
-                sshResultLabel.text = message
+                // sshResultLabel.text = message
             }
         }
-    }
 
-    Timer {
-        id: pingAnimation
-        interval: 500
-        repeat: true
-        running: false
-        onTriggered: {
-            if (pingResultLabel.text === "Ping testi devam ediyor") {
-                pingResultLabel.text = "Ping testi devam ediyor ."
-            } else if (pingResultLabel.text === "Ping testi devam ediyor .") {
-                pingResultLabel.text = "Ping testi devam ediyor . ."
-            } else if (pingResultLabel.text === "Ping testi devam ediyor . .") {
-                pingResultLabel.text = "Ping testi devam ediyor . . ."
-            } else {
-                pingResultLabel.text = "Ping testi devam ediyor"
+        Timer {
+            id: pingAnimation
+            interval: 500
+            repeat: true
+            running: false
+            onTriggered: {
+                if (pingResultLabel.text === "Ping testi devam ediyor") {
+                    pingResultLabel.text = "Ping testi devam ediyor ."
+                } else if (pingResultLabel.text === "Ping testi devam ediyor .") {
+                    pingResultLabel.text = "Ping testi devam ediyor . ."
+                } else if (pingResultLabel.text === "Ping testi devam ediyor . .") {
+                    pingResultLabel.text = "Ping testi devam ediyor . . ."
+                } else {
+                    pingResultLabel.text = "Ping testi devam ediyor"
+                }
             }
         }
+        FileDialog {
+            id: fileDialog
+            title: "Dosya Seçin"
+            onAccepted: {
+                console.log("Seçilen dosya: " + selectedFile)
+                /*if (fileDialog.title === "BEKB Dosyasını Seçin") {
+                    bekbFilelabel.text = selectedFile
+                    selectedLinuxFile = selectedFile
+                } else*/
+                if (fileDialog.title === "SKP Dosyasını Seçin") {
+                    skpFilelabel.text = selectedFile
+                } else if (fileDialog.title === "GGAP Dosyasını Seçin") {
+                    ggapFilelabel.text = selectedFile
+                }
+            }
+            onRejected: {
+                console.log("Dosya seçimi iptal edildi.")
+            }
+        }
+        FileDialog {
+            id: fileDialog1
+            title: "Dosya Seçin"
+            onAccepted: {
+                console.log("Seçilen dosya: " + selectedFile)
+                switch (bekbComboBox.currentText) {
+                    case "BKB1":
+                        bekb1Filelabel.text = selectedFile
+                        selectedBEKB1File = selectedFile
+                        break;
+                    case "BKB2":
+                        bekb2Filelabel.text = selectedFile
+                        selectedBEKB2File = selectedFile
+                        break;
+                    case "BKB3":
+                        bekb3Filelabel.text = selectedFile
+                        selectedBEKB3File = selectedFile
+                        break;
+                }
+            }
+            onRejected: {
+                console.log("Dosya seçimi iptal edildi.")
+            }
+        }
+        FileDialog {
+             id: linuxFileDialog
+             title: "Linux Dosyasını Seçin"
+             onAccepted: {
+                 console.log("Seçilen dosya: " + selectedFile)
+                 linuxFileLabel.text = selectedFile
+                 selectedLinuxFile = selectedFile
+             }
+             onRejected: {
+                 console.log("Linux dosyası seçimi iptal edildi.")
+             }
+        }
+
+         FileDialog {
+             id: rootfsFileDialog
+             title: "Rootfs Dosyasını Seçin"
+             onAccepted: {
+                 console.log("Seçilen dosya: " + selectedFile)
+                 rootfsFileLabel.text = selectedFile
+                 selectedRootfsFile = selectedFile
+             }
+             onRejected: {
+                 console.log("Rootfs dosyası seçimi iptal edildi.")
+             }
+         }
+
+        PropertyAnimation {
+            id: pingAnimation1
+            target: pingResultLabel
+            property: "color"
+            from: "blue"
+            to: "black"
+            duration: 1000
+            running: false
+        }
     }
-    FileDialog {
-         id: linuxFileDialog
-         title: "Linux Dosyasını Seçin"
-         onAccepted: {
-             console.log("Seçilen dosya: " + selectedFile)
-             linuxFileLabel.text = selectedFile
-             selectedLinuxFile = selectedFile
-         }
-         onRejected: {
-             console.log("Linux dosyası seçimi iptal edildi.")
-         }
-     }
-
-     FileDialog {
-         id: rootfsFileDialog
-         title: "Rootfs Dosyasını Seçin"
-         onAccepted: {
-             console.log("Seçilen dosya: " + selectedFile)
-             rootfsFileLabel.text = selectedFile
-             selectedRootfsFile = selectedFile
-         }
-         onRejected: {
-             console.log("Rootfs dosyası seçimi iptal edildi.")
-         }
-     }
-
-     Component.onDestruction: {
-         ipSettings.ip = ipAddressField.text
-     }
 }

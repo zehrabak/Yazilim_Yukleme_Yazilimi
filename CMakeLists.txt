@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-# vcpkg paths
+# # vcpkg paths
 set(VCPKG_ROOT "C:/Users/pc/vcpkg")  # vcpkg'nin doğru yolu ile değiştirin
 set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 
@@ -25,8 +25,7 @@ qt_add_qml_module(appYazilimYuklemeProjesi
     VERSION 1.0
     QML_FILES
         Main.qml
-        SOURCES pinghelper.h pinghelper.cpp
-        SOURCES sshhelper.h sshhelper.cpp
+        SOURCES pinghelper.h pinghelper.cpp sshhelper.h sshhelper.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
