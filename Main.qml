@@ -5,6 +5,7 @@ import QtQuick.Dialogs
 import QtCore
 import QtQuick.Controls.Material 2.15
 
+
 ApplicationWindow {
     visible: true
     width: 700
@@ -12,13 +13,13 @@ ApplicationWindow {
     title: "Yazılım Yükleme Projesi"
     color: "lightgrey"
 
-    property string selectedLinuxFile: ""
+    /*property string selectedLinuxFile: ""
     property string selectedRootfsFile: ""
     property string selectedBEKB1File: ""
     property string selectedBEKB2File: ""
     property string selectedBEKB3File: ""
     property string selectedSKPFile: ""
-    property string selectedGGAPFile: ""
+    property string selectedGGAPFile: "" */
     property bool pingSuccessful: false
     property bool sshConnected: false
     property bool uploadComplete: false
@@ -267,88 +268,6 @@ ApplicationWindow {
                 }
 
             }
-           /* Item {
-
-                    ColumnLayout {
-
-                        ComboBox {
-                            id:bekbComboBox
-                            Layout.alignment: Qt.AlignHCenter
-                            Layout.topMargin: 20
-                            width: parent.width / 2
-                            model: ["BKB1", "BKB2", "BKB3"]
-                            onCurrentTextChanged: {
-                                switch (currentText) {
-                                    case "BKB1":
-                                    fileDialog1.title = "BKB1 Dosyasını Seçin"
-                                    break;
-                                    case "BKB2":
-                                    fileDialog1.title = "BKB2 Dosyasını Seçin"
-                                    break;
-                                    case "BKB3":
-                                    fileDialog1.title = "BKB3 Dosyasını Seçin"
-                                    break;
-                                }
-                            }
-                        }
-                        GridLayout {
-                            columns: 4
-                            rowSpacing: 10
-                            columnSpacing: 10
-                            id: gridLayoutBekb
-
-                            // u-boot Row
-                            Text {
-                                text: "u-boot"
-                                Layout.leftMargin: 20
-                                Layout.alignment: Qt.AlignLeft
-                                Layout.columnSpan: 1
-                                Layout.row: 0
-                                color: "darkblue"
-
-                            }
-                            Button {
-                                text: "Seç"
-                                Layout.alignment: Qt.AlignLeft
-                                Layout.column: 2
-                                Layout.row: 0
-                                enabled: sshConnected
-                                background: Rectangle {
-                                    color: "#3498db"
-                                    radius: 5
-                                }
-                                onClicked: {
-                                    fileDialog1.open()
-                                }
-                            }
-                            Label {
-                                text: "..."
-                                id: bekb1Filelabel
-                                Layout.fillWidth: true
-                                Layout.column: 3
-                                Layout.row: 0
-                                enabled:sshConnected
-                            }
-                            Label {
-                                text: "..."
-                                id: bekb2Filelabel
-                                Layout.fillWidth: true
-                                Layout.column: 3
-                                Layout.row: 1
-                                enabled:sshConnected
-                            }
-                            Label {
-                                text: "..."
-                                id: bekb3Filelabel
-                                Layout.fillWidth: true
-                                Layout.column: 3
-                                Layout.row: 2
-                                enabled:sshConnected
-                            }
-
-                        }
-                    }
-                } */
             Item {
 
                 ColumnLayout {
@@ -498,7 +417,7 @@ ApplicationWindow {
                         columnSpacing: 20
                         Layout.topMargin: 20
 
-                        // u-boot Row
+
                         Text {
                             text: "u-boot"
                             Layout.leftMargin: 20
@@ -619,7 +538,6 @@ ApplicationWindow {
                 progressBar.visible = true
                 progressBar.value = 0
                 uploadTimer.start()
-
                 if (linuxCheckBox.checked) {
                     sshHelper.uploadFile(linuxFileLabel.text, "/mnt/update")
                 }
@@ -635,10 +553,10 @@ ApplicationWindow {
                 if (bekb3Filelabel.text !== "..."){
                     sshHelper.uploadFile(bekb3Filelabel.text, "/mnt/update")
                 }
-                if (skpFilelabel !== "...") {
+                if (skpFilelabel.text !== "...") {
                     sshHelper.uploadFile(skpFilelabel.text, "/mnt/update")
                 }
-                if (ggapFilelabel !== "...") {
+                if (ggapFilelabel.text !== "...") {
                     sshHelper.uploadFile(ggapFilelabel.text, "/mnt/update")
                 }
                 uploadTimer.stop()
@@ -709,7 +627,7 @@ ApplicationWindow {
                 sshConnected = false;
             }
             onSshMessage: {
-                // sshResultLabel.text = message
+                sshResultLabel.text = message
             }
         }
 
@@ -734,7 +652,6 @@ ApplicationWindow {
             id: fileDialog
             title: "Dosya Seçin"
             onAccepted: {
-                console.log("Seçilen dosya: " + selectedFile)
                 /*if (fileDialog.title === "BEKB Dosyasını Seçin") {
                     bekbFilelabel.text = selectedFile
                     selectedLinuxFile = selectedFile
@@ -757,15 +674,13 @@ ApplicationWindow {
                 switch (bekbComboBox.currentText) {
                     case "BKB1":
                         bekb1Filelabel.text = selectedFile
-                        selectedBEKB1File = selectedFile
                         break;
                     case "BKB2":
                         bekb2Filelabel.text = selectedFile
-                        selectedBEKB2File = selectedFile
                         break;
                     case "BKB3":
                         bekb3Filelabel.text = selectedFile
-                        selectedBEKB3File = selectedFile
+
                         break;
                 }
             }
@@ -779,7 +694,7 @@ ApplicationWindow {
              onAccepted: {
                  console.log("Seçilen dosya: " + selectedFile)
                  linuxFileLabel.text = selectedFile
-                 selectedLinuxFile = selectedFile
+                 //selectedLinuxFile = selectedFile
              }
              onRejected: {
                  console.log("Linux dosyası seçimi iptal edildi.")
@@ -792,7 +707,7 @@ ApplicationWindow {
              onAccepted: {
                  console.log("Seçilen dosya: " + selectedFile)
                  rootfsFileLabel.text = selectedFile
-                 selectedRootfsFile = selectedFile
+                 //selectedRootfsFile = selectedFile
              }
              onRejected: {
                  console.log("Rootfs dosyası seçimi iptal edildi.")
