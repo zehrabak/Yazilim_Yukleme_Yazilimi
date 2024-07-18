@@ -4,10 +4,11 @@
 #include "PingHelper.h"
 #include "SshHelper.h"
 #include <QSettings>
+#include <QTranslator>
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-
+    QTranslator translator;
     app.setOrganizationName("Some Company");
     app.setOrganizationDomain("somecompany.com");
     app.setApplicationName("Amazing Application");

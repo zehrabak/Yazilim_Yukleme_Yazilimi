@@ -171,3 +171,12 @@ bool SshHelper::uploadFile(const QString &localFilePath, const QString &remoteDi
     emit sshMessage("Ssh bağlantısı başarıyla kuruldu.");
     return true;
 }
+void SshHelper::disconnectFromHost()
+{
+    if (session) {
+        ssh_disconnect(session);
+        qDebug() << "SSH bağlantısı kesildi.";
+        emit sshMessage("SSH bağlantısı kesildi.");
+        emit sshDisconnected();
+    }
+}

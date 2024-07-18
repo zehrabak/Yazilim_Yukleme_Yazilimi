@@ -16,11 +16,13 @@ public:
     Q_INVOKABLE bool connectToHost(const QString &host, const QString &user, const QString &password = QString(""));
     Q_INVOKABLE bool executeRemoteCommand(const QString &command);
     Q_INVOKABLE bool uploadFile(const QString &localFilePath, const QString &remoteDir);
+    Q_INVOKABLE void disconnectFromHost();
 
 signals:
     void sshConnected();
     void sshConnectionFailed();
     void sshMessage(const QString &message);
+    void sshDisconnected();
 
 private:
     ssh_session session;
