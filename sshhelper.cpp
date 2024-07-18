@@ -24,12 +24,50 @@ bool SshHelper::connectToHost(const QString &host, const QString &user, const QS
     ssh_options_set(session, SSH_OPTIONS_HOST, ip);
     ssh_options_set(session, SSH_OPTIONS_USER, user.toStdString().c_str());
 
+    // Sunucu anahtar doğrulamasını devre dışı bırakma
+    ssh_options_set(session, SSH_OPTIONS_STRICTHOSTKEYCHECK, 0);
+
     int rc = ssh_connect(session);
     if (rc != SSH_OK) {
         qWarning() << "Ana bilgisayara bağlanırken hata oluştu:" << ssh_get_error(session);
         emit sshConnectionFailed();
         return false;
     }
+
+    // Sunucu anahtarını ve fingerprint oluşturma
+    ssh_key server_key;
+    rc = ssh_get_server_publickey(session, &server_key);
+    if (rc != SSH_OK) {
+        qWarning() << "Sunucu anahtarı alınamadı:" << ssh_get_error(session);
+        emit sshConnectionFailed();
+        return false;
+    }
+
+    unsigned char *hash = nullptr;
+    size_t hlen;
+    rc = ssh_get_publickey_hash(server_key, SSH_PUBLICKEY_HASH_SHA256, &hash, &hlen);
+    if (rc != SSH_OK) {
+        qWarning() << "Sunucu anahtar hash'i oluşturulamadı:" << ssh_get_error(session);
+        ssh_key_free(server_key);
+        emit sshConnectionFailed();
+        return false;
+    }
+
+    char *hexa = ssh_get_hexa(hash, hlen);
+    if (hexa == nullptr) {
+        qWarning() << "Hash hexadecimal formatına dönüştürülemedi.";
+        ssh_clean_pubkey_hash(&hash);
+        ssh_key_free(server_key);
+        emit sshConnectionFailed();
+        return false;
+    }
+
+    qDebug() << "Sunucu ECDSA anahtar fingerprint:" << hexa;
+    emit sshMessage(QString("Sunucu ECDSA anahtar fingerprint: %1").arg(hexa));
+
+    ssh_clean_pubkey_hash(&hash);
+    ssh_key_free(server_key);
+    ssh_string_free_char(hexa);
 
     rc = ssh_userauth_password(session, nullptr, password.toStdString().c_str());
     if (rc != SSH_AUTH_SUCCESS) {

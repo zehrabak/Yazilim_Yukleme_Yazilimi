@@ -13,13 +13,6 @@ ApplicationWindow {
     title: "Yazılım Yükleme Projesi"
     color: "lightgrey"
 
-    /*property string selectedLinuxFile: ""
-    property string selectedRootfsFile: ""
-    property string selectedBEKB1File: ""
-    property string selectedBEKB2File: ""
-    property string selectedBEKB3File: ""
-    property string selectedSKPFile: ""
-    property string selectedGGAPFile: "" */
     property bool pingSuccessful: false
     property bool sshConnected: false
     property bool uploadComplete: false
@@ -144,12 +137,12 @@ ApplicationWindow {
             currentIndex: bar.currentIndex
 
             Item {
+                ColumnLayout{
                 GridLayout {
                     columns: 4
                     rowSpacing: 10
                     columnSpacing: 10
 
-                    // u-boot Row
                     Text {
                         text: "u-boot"
                         Layout.leftMargin: 20
@@ -184,7 +177,6 @@ ApplicationWindow {
                         enabled: ubootCheckBox.checked && sshConnected
                     }
 
-                    // linux Row
                     Text {
                         text: "linux"
                         Layout.leftMargin: 20
@@ -225,7 +217,6 @@ ApplicationWindow {
                         enabled: linuxCheckBox.checked && sshConnected
                     }
 
-                    // rootfs Row
                     Text {
                         text: "rootfs"
                         Layout.leftMargin: 20
@@ -266,8 +257,40 @@ ApplicationWindow {
                         enabled: rootfsCheckBox.checked && sshConnected
                     }
                 }
+                RowLayout {
+                    Layout.columnSpan: 4
+                    Layout.topMargin: 20
 
+                    Button {
+                        text: "Yazılımı Yükle"
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.leftMargin: 20
+                        enabled: sshConnected && uploadComplete
+                        background: Rectangle {
+                            color: "#3498db"
+                            radius: 5
+                        }
+                        onClicked: {
+                            console.log(sshConnected)
+                            var result = ""
+                            if (linuxCheckBox.checked) {
+                                result = sshHelper.executeRemoteCommand("cp -r /run/media/sda1/AGP_Update/mitrona-image-multimedia-xwayland-mitrona-ccimx8x-sbc-pro.boot_SD.vfat /mnt/update")
+                            }
+                            if (rootfsCheckBox.checked) {
+                                result = sshHelper.executeRemoteCommand("cp -r /run/media/sda1/AGP_Update/mitrona-image-multimedia-xwayland-mitrona-ccimx8x-sbc-pro_SD.ext4 /mnt/update")
+                            }
+                            resultLabel1.text = result
+                        }
+                    }
+                    Label {
+                        id: resultLabel1
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.leftMargin: 10
+                        text: ""
+                    }
+                }
             }
+        }
             Item {
 
                 ColumnLayout {
@@ -301,7 +324,6 @@ ApplicationWindow {
                           columnSpacing: 10
                           id: gridLayoutBekb
 
-                          // BKB1 Row
                           Text {
                               text: "u-boot"
                               Layout.leftMargin: 20
@@ -336,7 +358,6 @@ ApplicationWindow {
                               visible: bekbComboBox.currentText === "BKB1"
                           }
 
-                          // BKB2 Row
                           Text {
                               text: "u-boot"
                               Layout.leftMargin: 20
@@ -371,7 +392,6 @@ ApplicationWindow {
                               visible: bekbComboBox.currentText === "BKB2"
                           }
 
-                          // BKB3 Row
                           Text {
                               text: "u-boot"
                               Layout.leftMargin: 20
@@ -406,8 +426,43 @@ ApplicationWindow {
                               visible: bekbComboBox.currentText === "BKB3"
                         }
                     }
+                RowLayout {
+                    Layout.columnSpan: 4
+                    Layout.topMargin: 20
+
+                    Button {
+                        text: "Yazılımı Yükle"
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.leftMargin: 20
+                        enabled: sshConnected && uploadComplete
+                        background: Rectangle {
+                            color: "#3498db"
+                            radius: 5
+                        }
+                        onClicked: {
+                            console.log(sshConnected)
+                            var result = ""
+                            if ( bekb1Filelabel.text !== "..."){
+                                result = sshHelper.executeRemoteCommand("/opt/CanUpdate/app/CANUpdate_Console --update can1 /mnt/update/DIA.elf BEKB_1_MCU_ALL")
+                            }
+                            if (bekb2Filelabel.text !== "..."){
+                                result = sshHelper.executeRemoteCommand("/opt/CanUpdate/app/CANUpdate_Console --update can1 /mnt/update/DIA.elf BEKB_2_MCU_ALL")
+                            }
+                            if (bekb3Filelabel.text !== "..."){
+                                result = sshHelper.executeRemoteCommand("/opt/CanUpdate/app/CANUpdate_Console --update can1 /mnt/update/DIA.elf BEKB_3_MCU_ALL ")
+                            }
+                            resultLabel2.text = result
+                        }
+                    }
+                    Label {
+                        id: resultLabel2
+                        Layout.alignment: Qt.AlignLeft
+                        Layout.leftMargin: 10
+                        text: ""
+                    }
                 }
             }
+        }
 
             Item {
                 ColumnLayout {
@@ -448,6 +503,35 @@ ApplicationWindow {
                             Layout.column: 3
                             Layout.row: 0
                             enabled:sshConnected
+                        }
+                    }
+                    RowLayout {
+                        Layout.columnSpan: 4
+                        Layout.topMargin: 20
+
+                        Button {
+                            text: "Yazılımı Yükle"
+                            Layout.alignment: Qt.AlignLeft
+                            Layout.leftMargin: 20
+                            enabled: sshConnected && uploadComplete
+                            background: Rectangle {
+                                color: "#3498db"
+                                radius: 5
+                            }
+                            onClicked: {
+                                console.log(sshConnected)
+                                var result = ""
+                                if (skpFilelabel.text !== "...") {
+                                    result = sshHelper.executeRemoteCommand("/opt/CanUpdate/app/CANUpdate_Console --update can1 /mnt/update/DIA.elf SKP")
+                                }
+                                resultLabel3.text = result
+                            }
+                        }
+                        Label {
+                            id: resultLabel3
+                            Layout.alignment: Qt.AlignLeft
+                            Layout.leftMargin: 10
+                            text: ""
                         }
                     }
                 }
@@ -493,11 +577,42 @@ ApplicationWindow {
                             enabled:sshConnected
                         }
                     }
-            }   }
+                    RowLayout {
+                        Layout.columnSpan: 4
+                        Layout.topMargin: 20
+
+                        Button {
+                            text: "Yazılımı Yükle"
+                            Layout.alignment: Qt.AlignLeft
+                            Layout.leftMargin: 20
+                            enabled: sshConnected && uploadComplete
+                            background: Rectangle {
+                                color: "#3498db"
+                                radius: 5
+                            }
+                            onClicked: {
+                                console.log(sshConnected)
+                                var result = ""
+                                if (ggapFilelabel.text !== "...") {
+                                    result = sshHelper.executeRemoteCommand("/opt/CanUpdate/app/CANUpdate_Console --update can1 /mnt/update/DIA.elf GGAB")
+                                }
+                                resultLabel4.text = result
+                            }
+                        }
+                        Label {
+                            id: resultLabel4
+                            Layout.alignment: Qt.AlignLeft
+                            Layout.leftMargin: 10
+                            text: ""
+                        }
+                    }
+                }
+            }
         }
 
         ProgressBar {
             id: progressBar
+            Layout.preferredWidth: 700
             Layout.alignment: Qt.AlignLeft
             Layout.columnSpan: 4
             visible: false
@@ -505,6 +620,7 @@ ApplicationWindow {
             to: 100
             value: 0
         }
+
         Timer {
             id: uploadTimer
             interval: 1000
@@ -566,33 +682,6 @@ ApplicationWindow {
             }
         }
 
-        RowLayout {
-            Layout.columnSpan: 4
-            Layout.topMargin: 20
-
-            Button {
-                text: "Yazılımı Yükle"
-                Layout.alignment: Qt.AlignLeft
-                Layout.leftMargin: 20
-                enabled: sshConnected && uploadComplete
-                background: Rectangle {
-                    color: "#3498db"
-                    radius: 5
-                }
-                onClicked: {
-                    console.log(sshConnected)
-                    var result = sshHelper.executeRemoteCommand("sync && reboot now")
-                    resultLabel.text = result
-                }
-            }
-
-            Label {
-                id: resultLabel
-                Layout.alignment: Qt.AlignLeft
-                Layout.leftMargin: 10
-                text: ""
-            }
-        }
 
         Connections {
             target: pingHelper
@@ -652,10 +741,6 @@ ApplicationWindow {
             id: fileDialog
             title: "Dosya Seçin"
             onAccepted: {
-                /*if (fileDialog.title === "BEKB Dosyasını Seçin") {
-                    bekbFilelabel.text = selectedFile
-                    selectedLinuxFile = selectedFile
-                } else*/
                 if (fileDialog.title === "SKP Dosyasını Seçin") {
                     skpFilelabel.text = selectedFile
                 } else if (fileDialog.title === "GGAP Dosyasını Seçin") {
@@ -694,7 +779,6 @@ ApplicationWindow {
              onAccepted: {
                  console.log("Seçilen dosya: " + selectedFile)
                  linuxFileLabel.text = selectedFile
-                 //selectedLinuxFile = selectedFile
              }
              onRejected: {
                  console.log("Linux dosyası seçimi iptal edildi.")
@@ -707,7 +791,6 @@ ApplicationWindow {
              onAccepted: {
                  console.log("Seçilen dosya: " + selectedFile)
                  rootfsFileLabel.text = selectedFile
-                 //selectedRootfsFile = selectedFile
              }
              onRejected: {
                  console.log("Rootfs dosyası seçimi iptal edildi.")

@@ -18,7 +18,9 @@ find_package(libssh CONFIG REQUIRED)
 
 qt_add_executable(appYazilimYuklemeProjesi
     main.cpp
+    pinghelper.h
     pinghelper.cpp
+    sshhelper.h
     sshhelper.cpp
 )
 
