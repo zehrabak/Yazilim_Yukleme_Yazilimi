@@ -265,7 +265,7 @@ ApplicationWindow {
                         text: "Yazılımı Yükle"
                         Layout.alignment: Qt.AlignLeft
                         Layout.leftMargin: 20
-                        enabled: sshConnected //&& (linuxFileLabel.text !== "..." || rootfsFileLabel.text !== "...")
+                        enabled: sshConnected && (linuxFileLabel.text !== "..." || rootfsFileLabel.text !== "...")
                         background: Rectangle {
                             color: "#3498db"
                             radius: 5
