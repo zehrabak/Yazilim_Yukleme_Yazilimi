@@ -10,7 +10,7 @@ ApplicationWindow {
     visible: true
     width: 700
     height: 500
-    title: "Yazılım Yükleme Projesi"
+    title: qsTr("Yazılım Yükleme Projesi")
     color: "lightgrey"
 
     property bool pingSuccessful: false
@@ -31,7 +31,7 @@ ApplicationWindow {
             Layout.alignment: Qt.AlignHCenter
 
             Text {
-                text: "IP Adresi:"
+                text: qsTr("IP Address:")
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 20
                 verticalAlignment: Text.AlignVCenter
@@ -41,14 +41,14 @@ ApplicationWindow {
 
             TextField {
                 id: ipAddressField
-                placeholderText: "IP adresini girin"
+                placeholderText:qsTr("IP adresini girin")
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 10
                 width: 150
             }
 
             Button {
-                text: "Ping Testi"
+                text: qsTr("Ping Testi")
                 Layout.alignment: Qt.AlignLeft
                 background: Rectangle {
                     color: "#3498db"
@@ -60,7 +60,7 @@ ApplicationWindow {
                     if (ip !== "") {
                         pingHelper.ping(ip)
                     } else {
-                        pingResultLabel.text = "Geçerli bir IP adresi girin."
+                        pingResultLabel.text = qsTr("Geçerli bir IP adresi girin.")
                     }
                 }
             }
@@ -93,9 +93,9 @@ ApplicationWindow {
                     var ip = ipAddressField.text.trim()
 
                     if (ip !== "") {
-                        sshHelper.connectToHost(ip, "root")
+                        sshHelper.connectToHost(ip, "zehra", "12345")
                     } else {
-                        sshResultLabel.text = "Geçerli bir IP adresi girin."
+                        sshResultLabel.text = qsTr("Geçerli bir IP adresi girin.")
                     }
                 }
             }
@@ -111,8 +111,8 @@ ApplicationWindow {
         TabBar {
             id: bar
             width: parent.width
-            contentWidth: 700
-
+            anchors.left: parent.left
+            anchors.right: parent.right
             TabButton {
                 text: "AGP"
                 onClicked: bar.currentIndex = 0
@@ -133,7 +133,8 @@ ApplicationWindow {
 
         StackLayout {
             id: stack
-            width: parent.width
+            width: Screen.width
+            height: Screen.height
             currentIndex: bar.currentIndex
 
             Item {
@@ -159,7 +160,7 @@ ApplicationWindow {
                         enabled: sshConnected
                     }
                     Button {
-                        text: "Seç"
+                        text: qsTr("Seç")
                         Layout.alignment: Qt.AlignLeft
                         Layout.column: 2
                         Layout.row: 0
@@ -193,7 +194,7 @@ ApplicationWindow {
                         enabled: sshConnected
                     }
                     Button {
-                        text: "Seç"
+                        text: qsTr("Seç")
                         Layout.alignment: Qt.AlignLeft
                         Layout.column: 2
                         Layout.row: 1
@@ -233,7 +234,7 @@ ApplicationWindow {
                         enabled: sshConnected
                     }
                     Button {
-                        text: "Seç"
+                        text: qsTr("Seç")
                         Layout.alignment: Qt.AlignLeft
                         Layout.column: 2
                         Layout.row: 2
@@ -262,7 +263,7 @@ ApplicationWindow {
                     Layout.topMargin: 20
 
                     Button {
-                        text: "Yazılımı Yükle"
+                        text: qsTr("Yazılımı Yükle")
                         Layout.alignment: Qt.AlignLeft
                         Layout.leftMargin: 20
                         enabled: sshConnected && (linuxFileLabel.text !== "..." || rootfsFileLabel.text !== "...")
@@ -294,8 +295,8 @@ ApplicationWindow {
             }
         }
             Item {
-                width: parent.width
-                height: parent.height
+                width: Screen.width
+                height: Screen.height
 
                 ColumnLayout {
                     anchors.fill: parent
@@ -310,13 +311,13 @@ ApplicationWindow {
                         onCurrentTextChanged: {
                             switch (currentText) {
                                 case "BKB1":
-                                fileDialog1.title = "BKB1 Dosyasını Seçin"
+                                fileDialog1.title = qsTr("BKB1 Dosyasını Seçin")
                                 break;
                                 case "BKB2":
-                                fileDialog1.title = "BKB2 Dosyasını Seçin"
+                                fileDialog1.title = qsTr("BKB2 Dosyasını Seçin")
                                 break;
                                 case "BKB3":
-                                fileDialog1.title = "BKB3 Dosyasını Seçin"
+                                fileDialog1.title = qsTr("BKB3 Dosyasını Seçin")
                                 break;
                             }
                         }
@@ -329,7 +330,7 @@ ApplicationWindow {
                         id: gridLayoutBekb
 
                         Text {
-                            text: "Yazılım"
+                            text: qsTr("Yazılım")
                             Layout.leftMargin: 20
                             Layout.alignment: Qt.AlignLeft
                             Layout.columnSpan: 1
@@ -338,7 +339,7 @@ ApplicationWindow {
                             visible: bekbComboBox.currentText === "BKB1"
                         }
                         Button {
-                            text: "Seç"
+                            text: qsTr("Seç")
                             Layout.alignment: Qt.AlignLeft
                             Layout.column: 2
                             Layout.row: 0
@@ -363,7 +364,7 @@ ApplicationWindow {
                         }
 
                         Text {
-                            text: "Yazılım"
+                            text: qsTr("Yazılım")
                             Layout.leftMargin: 20
                             Layout.alignment: Qt.AlignLeft
                             Layout.columnSpan: 1
@@ -372,7 +373,7 @@ ApplicationWindow {
                             visible: bekbComboBox.currentText === "BKB2"
                         }
                         Button {
-                            text: "Seç"
+                            text: qsTr("Seç")
                             Layout.alignment: Qt.AlignLeft
                             Layout.column: 2
                             Layout.row: 0
@@ -397,7 +398,7 @@ ApplicationWindow {
                         }
 
                         Text {
-                            text: "Yazılım"
+                            text: qsTr("Yazılım")
                             Layout.leftMargin: 20
                             Layout.alignment: Qt.AlignLeft
                             Layout.columnSpan: 1
@@ -406,7 +407,7 @@ ApplicationWindow {
                             visible: bekbComboBox.currentText === "BKB3"
                         }
                         Button {
-                            text: "Seç"
+                            text: qsTr("Seç")
                             Layout.alignment: Qt.AlignLeft
                             Layout.column: 2
                             Layout.row: 0
@@ -437,7 +438,7 @@ ApplicationWindow {
                         visible: bekbComboBox.currentText === "BKB1"
 
                         Button {
-                            text: "Yazılımı Yükle"
+                            text: qsTr("Yazılımı Yükle")
                             Layout.alignment: Qt.AlignLeft
                             Layout.leftMargin: 20
                             enabled: sshConnected && bekb1Filelabel.text !== "..."
@@ -468,7 +469,7 @@ ApplicationWindow {
                         visible: bekbComboBox.currentText === "BKB2"
 
                         Button {
-                            text: "Yazılımı Yükle"
+                            text: qsTr("Yazılımı Yükle")
                             Layout.alignment: Qt.AlignLeft
                             Layout.leftMargin: 20
                             enabled: sshConnected && bekb2Filelabel.text !== "..."
@@ -499,7 +500,7 @@ ApplicationWindow {
                         visible: bekbComboBox.currentText === "BKB3"
 
                         Button {
-                            text: "Yazılımı Yükle"
+                            text: qsTr("Yazılımı Yükle")
                             Layout.alignment: Qt.AlignLeft
                             Layout.leftMargin: 20
                             enabled: sshConnected && bekb3Filelabel.text !== "..."
@@ -527,6 +528,8 @@ ApplicationWindow {
             }
 
             Item {
+                width: Screen.width
+                height: Screen.height
                 ColumnLayout {
                     GridLayout {
                        columns: 4
@@ -536,7 +539,7 @@ ApplicationWindow {
 
 
                         Text {
-                            text: "Yazılım"
+                            text: qsTr("Yazılım")
                             Layout.leftMargin: 20
                             Layout.alignment: Qt.AlignLeft
                             Layout.columnSpan: 1
@@ -544,7 +547,7 @@ ApplicationWindow {
                             color: "darkblue"
                         }
                         Button {
-                            text: "Seç"
+                            text: qsTr("Seç")
                             Layout.alignment: Qt.AlignLeft
                             Layout.column: 2
                             Layout.row: 0
@@ -572,7 +575,7 @@ ApplicationWindow {
                         Layout.topMargin: 20
 
                         Button {
-                            text: "Yazılımı Yükle"
+                            text: qsTr("Yazılımı Yükle")
                             Layout.alignment: Qt.AlignLeft
                             Layout.leftMargin: 20
                             enabled: sshConnected && skpFilelabel.text !== "..."
@@ -599,6 +602,8 @@ ApplicationWindow {
                 }
         }
             Item {
+                width: Screen.width
+                height: Screen.height
                 ColumnLayout {
                     GridLayout {
                         columns: 4
@@ -608,7 +613,7 @@ ApplicationWindow {
 
                         // u-boot Row
                         Text {
-                            text: "Yazılım"
+                            text: qsTr("Yazılım")
                             Layout.leftMargin: 20
                             Layout.alignment: Qt.AlignLeft
                             Layout.columnSpan: 1
@@ -616,7 +621,7 @@ ApplicationWindow {
                             color: "darkblue"
                         }
                         Button {
-                            text: "Seç"
+                            text: qsTr("Seç")
                             Layout.alignment: Qt.AlignLeft
                             Layout.column: 2
                             Layout.row: 0
@@ -644,7 +649,7 @@ ApplicationWindow {
                         Layout.topMargin: 20
 
                         Button {
-                            text: "Yazılımı Yükle"
+                            text: qsTr("Yazılımı Yükle")
                             Layout.alignment: Qt.AlignLeft
                             Layout.leftMargin: 20
                             enabled: sshConnected && ggapFilelabel.text !== "..."
@@ -674,13 +679,19 @@ ApplicationWindow {
 
         ProgressBar {
             id: progressBar
-            Layout.preferredWidth: 700
+            anchors.left: parent.left
+            anchors.right: parent.right
             Layout.alignment: Qt.AlignLeft
             Layout.columnSpan: 4
             visible: false
             from: 0
             to: 100
             value: 0
+            contentItem: Rectangle {
+                width: progressBar.visualPosition * progressBar.width
+                height: progressBar.height
+                color: "green"
+            }
         }
 
         Timer {
@@ -700,7 +711,7 @@ ApplicationWindow {
         }
         Button {
             id: startButton
-            text: "Karşıya Yükle"
+            text: qsTr("Karşıya Yükle")
             Layout.alignment: Qt.AlignLeft
             Layout.columnSpan: 4
             Layout.minimumWidth: 100
@@ -748,17 +759,19 @@ ApplicationWindow {
         Connections {
             target: pingHelper
             onPingInProgress: {
-                pingResultLabel.text = "Ping testi devam ediyor"
+
                 pingAnimation.running = true
+                pingResultLabel.text = qsTr("Ping testi devam ediyor")
+
             }
             onPingSuccess: {
-                pingResultLabel.text = "Ping başarılı"
+                pingResultLabel.text = qsTr("Ping başarılı")
                 pingResultLabel.color = "green"
                 pingAnimation.running = false
                 pingSuccessful = true;
             }
             onPingFailed: {
-                pingResultLabel.text = "Ping başarısız"
+                pingResultLabel.text = qsTr("Ping başarısız")
                 pingResultLabel.color = "red"
                 pingAnimation.running = false
                 pingSuccessful = false;
@@ -768,12 +781,12 @@ ApplicationWindow {
         Connections {
             target: sshHelper
             onSshConnected: {
-                sshResultLabel.text = "SSH bağlantısı başarılı"
+                sshResultLabel.text = qsTr("SSH bağlantısı başarılı")
                 sshResultLabel.color = "green"
                 sshConnected = true;
             }
             onSshConnectionFailed: {
-                sshResultLabel.text = "SSH bağlantısı başarısız"
+                sshResultLabel.text = qsTr("SSH bağlantısı başarısız")
                 sshResultLabel.color = "red"
                 sshConnected = false;
             }
@@ -788,14 +801,14 @@ ApplicationWindow {
             repeat: true
             running: false
             onTriggered: {
-                if (pingResultLabel.text === "Ping testi devam ediyor") {
-                    pingResultLabel.text = "Ping testi devam ediyor ."
-                } else if (pingResultLabel.text === "Ping testi devam ediyor .") {
-                    pingResultLabel.text = "Ping testi devam ediyor . ."
-                } else if (pingResultLabel.text === "Ping testi devam ediyor . .") {
-                    pingResultLabel.text = "Ping testi devam ediyor . . ."
+                if (pingResultLabel.text === qsTr("Ping testi devam ediyor")) {
+                    pingResultLabel.text = qsTr("Ping testi devam ediyor .")
+                } else if (pingResultLabel.text === qsTr("Ping testi devam ediyor .")) {
+                    pingResultLabel.text = qsTr("Ping testi devam ediyor . .")
+                } else if (pingResultLabel.text === qsTr("Ping testi devam ediyor . .")) {
+                    pingResultLabel.text = qsTr("Ping testi devam ediyor . . .")
                 } else {
-                    pingResultLabel.text = "Ping testi devam ediyor"
+                    pingResultLabel.text = qsTr("Ping testi devam ediyor")
                 }
             }
         }
@@ -815,7 +828,7 @@ ApplicationWindow {
         }
         FileDialog {
             id: fileDialog1
-            title: "Dosya Seçin"
+            title: qsTr("Dosya Seçin")
             onAccepted: {
                 console.log("Seçilen dosya: " + selectedFile)
                 switch (bekbComboBox.currentText) {
@@ -837,7 +850,7 @@ ApplicationWindow {
         }
         FileDialog {
              id: linuxFileDialog
-             title: "Linux Dosyasını Seçin"
+             title: qsTr("Linux Dosyasını Seçin")
              onAccepted: {
                  console.log("Seçilen dosya: " + selectedFile)
                  linuxFileLabel.text = selectedFile
@@ -849,7 +862,7 @@ ApplicationWindow {
 
          FileDialog {
              id: rootfsFileDialog
-             title: "Rootfs Dosyasını Seçin"
+             title: qsTr("Rootfs Dosyasını Seçin")
              onAccepted: {
                  console.log("Seçilen dosya: " + selectedFile)
                  rootfsFileLabel.text = selectedFile

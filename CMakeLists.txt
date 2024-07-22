@@ -12,9 +12,10 @@ project(YazilimYuklemeProjesi VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.2 REQUIRED COMPONENTS Quick QuickControls2 QuickLayouts QuickDialogs2)
+find_package(Qt6 6.2 REQUIRED COMPONENTS Quick QuickControls2 QuickLayouts QuickDialogs2 LinguistTools)
 find_package(libssh CONFIG REQUIRED)
 
+qt_standard_project_setup()
 
 qt_add_executable(appYazilimYuklemeProjesi
     main.cpp
@@ -22,6 +23,8 @@ qt_add_executable(appYazilimYuklemeProjesi
     pinghelper.cpp
     sshhelper.h
     sshhelper.cpp
+    translations/yazilim_yukleme_tr.ts
+    translations/yazilim_yukleme_en.ts
 )
 
 qt_add_qml_module(appYazilimYuklemeProjesi
@@ -29,7 +32,17 @@ qt_add_qml_module(appYazilimYuklemeProjesi
     VERSION 1.0
     QML_FILES
         Main.qml
+        RESOURCES translations/yazilim_yukleme_tr.qm
+        RESOURCES translations/yazilim_yukleme_en.qm
 )
+
+qt_add_translations(appYazilimYuklemeProjesi
+    TS_FILES
+    translations/yazilim_yukleme_tr.ts
+    translations/yazilim_yukleme_en.ts
+)
+
+qt_add_translations_
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -45,6 +58,8 @@ set_target_properties(appYazilimYuklemeProjesi PROPERTIES
 target_link_libraries(appYazilimYuklemeProjesi
     PRIVATE Qt6::Quick Qt6::QuickControls2 Qt6::QuickLayouts ssh
 )
+
+install(DIRECTORY translations DESTINATION ${CMAKE_INSTALL_BINDIR}/translations)
 
 include(GNUInstallDirs)
 install(TARGETS appYazilimYuklemeProjesi
