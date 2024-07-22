@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-# # vcpkg paths
+# vcpkg paths
 set(VCPKG_ROOT "C:/Users/pc/vcpkg")  # vcpkg'nin doğru yolu ile değiştirin
 set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
 
@@ -23,8 +23,6 @@ qt_add_executable(appYazilimYuklemeProjesi
     pinghelper.cpp
     sshhelper.h
     sshhelper.cpp
-    translations/yazilim_yukleme_tr.ts
-    translations/yazilim_yukleme_en.ts
 )
 
 qt_add_qml_module(appYazilimYuklemeProjesi
@@ -32,18 +30,34 @@ qt_add_qml_module(appYazilimYuklemeProjesi
     VERSION 1.0
     QML_FILES
         Main.qml
-        RESOURCES translations/yazilim_yukleme_tr.qm
-        RESOURCES translations/yazilim_yukleme_en.qm
 )
 
-qt_add_translations(appYazilimYuklemeProjesi
+qt_add_lupdate(appYazilimYuklemeProjesi
     TS_FILES
     translations/yazilim_yukleme_tr.ts
     translations/yazilim_yukleme_en.ts
+    # SOURCES
+    # main.cpp
+    # pinghelper.cpp
+    # sshhelper.cpp
+    # Main.qml
 )
 
-qt_add_translations_
+qt_add_lrelease(appYazilimYuklemeProjesi
+    TS_FILES
+    translations/yazilim_yukleme_tr.ts
+    translations/yazilim_yukleme_en.ts
+    QM_FILES_OUTPUT_VARIABLE qm_files
+)
 
+# .qm dosyalarını hedefe eklemek
+target_sources(appYazilimYuklemeProjesi PRIVATE ${qm_files})
+
+add_custom_target(show_qm_files ALL
+    COMMAND ${CMAKE_COMMAND} -E echo "Updated .qm files: ${updated_qm_files}"
+    COMMAND ${CMAKE_COMMAND} -E echo "Generated .qm files: ${qm_files}"
+    DEPENDS appYazilimYuklemeProjesi
+)
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
