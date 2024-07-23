@@ -107,7 +107,6 @@ bool SshHelper::executeRemoteCommand(const QString &command)
     int nbytes;
     while ((nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0)) > 0) {
         QString output = QString::fromUtf8(buffer, nbytes);
-        emit sshMessage(output);
         qDebug() << "Command output:" << output;
     }
 

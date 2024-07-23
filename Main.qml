@@ -93,7 +93,7 @@ ApplicationWindow {
                     var ip = ipAddressField.text.trim()
 
                     if (ip !== "") {
-                        sshHelper.connectToHost(ip, "zehra", "12345")
+                        sshHelper.connectToHost(ip, "root", "")
                     } else {
                         sshResultLabel.text = qsTr("Geçerli bir IP adresi girin.")
                     }
@@ -587,7 +587,7 @@ ApplicationWindow {
                                 console.log(sshConnected)
                                 var result = ""
                                 if (skpFilelabel.text !== "...") {
-                                    result = sshHelper.executeRemoteCommand("/opt/CanUpdate/app/CANUpdate_Console --update can1 /mnt/update/DIA.elf SKP")
+                                     result = sshHelper.executeRemoteCommand("cd /opt/CANUpdate/app && /opt/CANUpdate/app/CANUpdate_Console --update can1 /mnt/update/DIA.elf SKP ")
                                 }
                                 resultLabel3.text = result
                             }
