@@ -31,7 +31,7 @@ ApplicationWindow {
             Layout.alignment: Qt.AlignHCenter
 
             Text {
-                text: qsTr("IP:")
+                text: qsTr("IP :")
                 Layout.alignment: Qt.AlignLeft
                 Layout.leftMargin: 20
                 verticalAlignment: Text.AlignVCenter
